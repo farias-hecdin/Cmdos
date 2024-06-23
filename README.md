@@ -8,7 +8,7 @@ Cmdos es un modulo para Nim que proporciona una forma sencilla de procesar argum
 
 1. Importa el módulo Cmdos.
 ```nim
-import Cmdos
+import Cmdos/cmdos
 ```
 
 2. Define tus argumentos y sus valores predeterminados.
@@ -21,7 +21,7 @@ var example = Cmdos(
 
 3. Extrae los valores analizados.
 ```nim
-var pairs = g_extractPairs(example.g_processArgsInputs())
+var pairs = extractPairs(example.processArgsInputs())
 ```
 
 4. Y utiliza los valores en tu aplicación.
@@ -35,7 +35,7 @@ Aquí hay un ejemplo completo que demuestra cómo usar Cmdos:
 
 ```nim
 import os
-import Cmdos
+import Cmdos/cmdos
 
 var example = Cmdos(
   arguments: @["--name", "--age"],
@@ -45,12 +45,14 @@ var example = Cmdos(
 if paramCount() > 0:
   case paramStr(1):
     of "--name":
-      echo "Nombre: ", g_extractPairs(example.g_processArgsInputs())[0]
+      echo "Nombre: ", extractPairs(example.processArgsInputs())[0]
     of "--age":
-      echo "Edad: ", g_extractPairs(example.g_processArgsInputs())[1]
+      echo "Edad: ", extractPairs(example.processArgsInputs())[1]
+```
 
-#-- Ejecuta el ejemplo con argumentos de línea de comandos:
-# nim compile --run example.nim --name "Jane Doe" --age 25
+Ejecuta el ejemplo con argumentos de línea de comandos:
+```sh
+nim c -r example.nim --name "Jane Doe" --age 25
 ```
 
 ## Licencia
