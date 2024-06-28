@@ -8,7 +8,7 @@ type
 
   Cmdos* = object
     args*: seq[Arg]
-    values*: seq[string]
+    opts*: seq[string]
 
 var skipFirst: bool
 
