@@ -2,13 +2,13 @@ import os
 
 type
   Arg* = object
-    short*: string
-    long*: string
-    default*: string
+    short*: string = ""
+    long*: string = ""
+    default*: string = ""
 
   Cmdos* = object
     args*: seq[Arg]
-    opts*: seq[string]
+    opts*: seq[string] = @[""]
 
 var skipFirst: bool
 
@@ -34,12 +34,12 @@ proc mergeArgsInputs(self: Cmdos, A, B: seq[string]): seq[string] =
   return values
 
 #-- Procesar los argumentos de entrada
-proc processArgs*(self: Cmdos, ignoreFirst: bool = false): seq[string] =
+proc processArgs*(self: Cmdos, ignoreFirst: bool = false, cliArgs: seq[string] = commandLineParams()): seq[string] =
   var inputs, default, data: seq[string]
   skipFirst = ignoreFirst
 
   # Verificar si el número de inputs tiene pares clave-valor
-  add(inputs, commandLineParams())
+  add(inputs, cliArgs)
   if (inputs.len %% 2 == 0) == skipFirst:
     echo "Error: Invalid argument."
     return
