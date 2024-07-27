@@ -1,5 +1,5 @@
 import std/[strutils, sequtils]
-import cmdos
+import types
 
 const margin: string = (" ").repeat(2)
 
@@ -9,7 +9,7 @@ const
   underline = bold & "\e[4;37m"
   reset = "\e[0m"
 
-#-- Obtener la palabra mas larga de un arreglo y su longitud
+#-- Get the longest word in an array and its length
 proc getLongestWord(words: seq[string]): (string, int) = (
   var longestWord: string
   var maxLength = 0

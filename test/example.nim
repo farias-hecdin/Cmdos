@@ -1,51 +1,63 @@
-import std/[strformat, strutils, sequtils]
+import std/[os]
 import "../src/cmdos"
 
-include "./example_data"
-
-#-- Process the help screen
-proc processHelp(data: Cmdtype): string = (
-  const cmdos = data[0]
-  const appName: string = cmdos.appName
-  const marginFix: string = (" ").repeat(cmdos.helpMargin)
-  const spacingFix: int = cmdos.helpSpacing
-
-  # Design the “Usage” section
-  const getUsageSection = formatUsageSection(data).join(" ")
-  const usage_section: string = "Usage:\n$1$2 $3\n" % [marginFix, appName, getUsageSection]
-
-  # Design the “Commands” section
-  const getCommandsSection = formatCommandsSection(data, marginFix).join("\n")
-  const commands_section: string = "Commands:\n$1" % [getCommandsSection]
-
-  # Design the “Options” section
-  # Design the “X options” section
-  result = usage_section & "\n" & commands_section & "\n"
+const Help = CmdosCmd(
+  names: @["-h", "--help"],
+  desc: "Displays this help screen.",
 )
 
-#[
-# Option line ---------------------------------------------------------------------------
-for command in data[0].cmds:
- var (name, _) = getLongestWord(command.name)
- var argm: seq[string]
+const Version = CmdosCmd(
+  names: @["-v", "--version"],
+  desc: "Displays the version number.",
+)
 
- if len(command.name) > 1: name = command.name[1]
- else: name = command.name[0]
+const Add = CmdosCmd(
+  names: @["add"],
+  desc: "Adds a new book to the library.",
+  args: @[
+    CmdosArg(
+      names: @["-t", "--title"],
+      inputs: @["The Great Book"],
+      desc: "The title of the book.",
+      placeholder: "<string>",
+    ),
+    CmdosArg(
+      names: @["-a", "--author"],
+      inputs: @["John Doe", "Susan Dek"],
+      desc: "The author of the book.",
+      placeholder: "<string>...",
+    ),
+    CmdosArg(
+      names: @["-p", "--pages"],
+      inputs: @["800"],
+      desc: "The number of pages in the book.",
+      placeholder: "<int>",
+    ),
+  ],
+)
 
- if name != "--help" or name != "--version":
-   for a in command.args:
-     add(argm, a.short & ", " & a.long & " " & a.desc)
+const Init = [
+  Cmdos(
+    name: "Example",
+    version: "1.0.X",
+    cmds: @[Add, Version, Help],
+  )
+]
 
-   var OPTIONS_LINE = name & " options:\n" & argm.join("\n")
-   echo OPTIONS_LINE
+# Init app
+proc run() = (
+  if paramCount() > 0:
+    case paramStr(1):
+      of "-h", "--help":
+        const help = processHelp(Init)
+        echo help
+      of "-v", "--version":
+        echo Init[0].version
+      of "add":
+        var values = processArgs(Add, false)
+        echo values
+      else:
+        echo "Invalid option"
+)
 
-# ---------------------------------------------------------------------------
-
---Add options:
-  -l, --case-sensitive    (04)The number of pages in the book
-  -t, --title             (13)The title of the book
-  -a, --author            (12)The author of the book
-]#
-
-const message = processHelp(Init)
-echo message
+run()
