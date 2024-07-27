@@ -2,55 +2,95 @@
 > Use `Google Translate` to read this file in your native language.
 
 # Cmdos
-Cmdos es un pequeño modulo para [`Nim`](https://nim-lang.org/) que proporciona una forma sencilla de procesar argumentos de línea de comandos.
+Cmdos es un pequeño módulo para [`Nim`](https://nim-lang.org/) que facilita el procesamiento de argumentos de línea de comandos y la generación automática de mensajes de ayuda.
+
+## Características
+
+### Ventajas:
+- Es muy fácil de implementar.
+- Permite recibir múltiples entradas para un mismo argumento.
+- Provee un generador de mensajes de ayuda que se crea en tiempo de compilación.
+
+### Desventajas:
+- No permite argumentos solitarios; todos los argumentos deben recibir un valor por defecto.
+- No admite delimitadores para separar valores (por ejemplo: `-c=Red,Blue`, `-c=:Red:Blue`), solo espacios en blanco (`-a Red Blue`).
+- No admite llamar un mismo argumento múltiples veces; es decir, `-c Red -c Blue` ignorará la segunda llamada del argumento.
 
 ## Instalación
-Para instalar Cmdos, sigue el siguiente paso:
+Para instalar Cmdos, sigue los siguiente pasos:
+
 ```sh
 nimble install https://github.com/farias-hecdin/Cmdos.git
 ```
 
 ## Uso
+1. Primero, importa el módulo `pkg/Cmdos`, y el modulo `std/os` para capturar los argumentos de entrada.
 
-1. Importa el módulo Cmdos.
 ```nim
-import cmdos
+import pkg/cmdos
+import std/[os]
 ```
 
-2. Define tus argumentos y sus valores predeterminados.
+2. Define tus argumentos y sus valores predeterminados. Aquí tienes un ejemplo de cómo definir un comando con varios argumentos:
+
 ```nim
-var person = Cmdos(
+# Command number one
+const Add = CmdosCmd(
+  names: @["add"],
+  desc: "Adds a new book to the library.",
   args: @[
-    Arg(short: "-n", long: "--name", default: "John Doe"),
-    Arg(short: "-a", long: "--age", default: "30"),
+    CmdosArg(
+      names: @["-t", "--title"],
+      inputs: @["The Great Book"],
+      desc: "The title of the book.",
+      placeholder: "<string>",
+    ),
+    CmdosArg(
+      names: @["-a", "--author"],
+      inputs: @["John Doe", "Susan Dek"],
+      desc: "The author of the book.",
+      placeholder: "<string>...",
+    ),
+    CmdosArg(
+      names: @["-p", "--pages"],
+      inputs: @["800"],
+      desc: "The number of pages in the book.",
+      placeholder: "<int>",
+    ),
   ],
-  opts: @["My name is '", "' and i am '", "' years old."]
 )
 ```
 
-3. Procesa los argumentos y extrae los valores analizados.
+3. Procesa los argumentos y extrae los valores analizados. Aquí tienes un ejemplo de cómo hacerlo:
+
 ```nim
-var input = processArgs(person, false) # The value "true" omits the first parameter.
-var (arg, value) = extractPairs(input)
+# Init app
+proc run() = (
+  if paramCount() > 0:
+    case paramStr(1):
+      of "add":
+        var values = processArgs(Add)
+        echo values
+      else:
+        echo "Invalid option"
+)
 ```
 
-4. Y utiliza los valores en tu aplicación.
-```nim
-var opts = person.opts
+4. Una vez que los argumentos han sido procesados, puedes utilizarlos en tu aplicación.
 
-echo "1. Input: ", input
-echo "2. Args: ", arg
-echo "3. Values: ", value
+Puedes ejecutar el ejemplo anterior de la siguiente manera:
 
-echo opts[0], value[0], opts[1], value[1], opts[2]
-```
-
-Ejecuta el ejemplo con argumentos de línea de comandos:
 ```sh
-nim c -r example.nim --name "Jane Doe" --age 25
+nim c example.nim
 ```
 
-Aquí hay otro [ejemplo](./test/example_1.nim) completo que demuestra cómo usar Cmdos.
+```sh
+./example add --title "Lorem Ipsum" --author "Jane Doe" --page 125
+```
+
+Aquí esta el [ejemplo](./test/example.nim) completo que demuestra cómo usar `Cmdos`.
 
 ## Licencia
 Cmdos está bajo la licencia MIT. Consulta el archivo `LICENSE` para obtener más información.
+
+

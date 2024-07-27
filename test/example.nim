@@ -1,16 +1,19 @@
 import std/[os]
 import "../src/cmdos"
 
+# Command number third
 const Help = CmdosCmd(
   names: @["-h", "--help"],
   desc: "Displays this help screen.",
 )
 
+# Command number two
 const Version = CmdosCmd(
   names: @["-v", "--version"],
   desc: "Displays the version number.",
 )
 
+# Command number one
 const Add = CmdosCmd(
   names: @["add"],
   desc: "Adds a new book to the library.",
@@ -49,15 +52,18 @@ proc run() = (
   if paramCount() > 0:
     case paramStr(1):
       of "-h", "--help":
+        # Generate a help message
         const help = processHelp(Init)
         echo help
       of "-v", "--version":
         echo Init[0].version
       of "add":
-        var values = processArgs(Add, false)
+        # Process the input arguments for the “Add” command.
+        var values = processArgs(Add)
         echo values
       else:
         echo "Invalid option"
 )
 
 run()
+
