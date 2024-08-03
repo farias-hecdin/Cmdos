@@ -1,4 +1,4 @@
-import std/[os]
+import os
 import "../src/cmdos"
 
 # Command number third
@@ -22,24 +22,24 @@ const Add = CmdosCmd(
       names: @["-t", "--title"],
       inputs: @["The Great Book"],
       desc: "The title of the book.",
-      placeholder: "<string>",
+      label: "<string>",
     ),
     CmdosArg(
       names: @["-a", "--author"],
       inputs: @["John Doe", "Susan Dek"],
       desc: "The author of the book.",
-      placeholder: "<string>...",
+      label: "<string>...",
     ),
     CmdosArg(
       names: @["-p", "--pages"],
       inputs: @["800"],
       desc: "The number of pages in the book.",
-      placeholder: "<int>",
+      label: "<int>",
     ),
   ],
 )
 
-const Init = [
+const Cli = [
   Cmdos(
     name: "Example",
     version: "1.0.X",
@@ -48,22 +48,22 @@ const Init = [
 ]
 
 # Init app
-proc run() = (
+proc run() =
   if paramCount() > 0:
     case paramStr(1):
+      # Generate a help message
       of "-h", "--help":
-        # Generate a help message
-        const help = processHelp(Init)
+        const help = processHelp(Cli)
         echo help
+      # Generate a version message
       of "-v", "--version":
-        echo Init[0].version
+        echo Cli[0].version
+      # Process the input arguments for the “Add” command.
       of "add":
-        # Process the input arguments for the “Add” command.
         var values = processArgs(Add)
         echo values
       else:
         echo "Invalid option"
-)
 
 run()
 

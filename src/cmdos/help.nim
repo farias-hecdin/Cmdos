@@ -1,17 +1,19 @@
-import std/[strutils, sequtils]
+import std/[strutils, sequtils, sets]
 import types
 
 const margin: string = (" ").repeat(2)
 
 #-- ANSI Color code (thanks to: https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124)
-const
-  bold = "\e[1;97m"
-  underline = bold & "\e[4;37m"
-  reset = "\e[0m"
+const bold = "\e[1;97m"
+const underline = (bold & "\e[4;37m")
+const reset = "\e[0m"
+
+proc areSeqEqual(seq1, seq2: seq[string]): bool =
+  return toSet(seq1) == toSet(seq2)
 
 #-- Get the longest word in an array and its length
-proc getLongestWord(words: seq[string]): (string, int) = (
-  var longestWord: string
+proc getLongestWord(words: seq[string]): (string, int) =
+  var longestWord = ""
   var maxLength = 0
 
   for word in words:
@@ -19,51 +21,54 @@ proc getLongestWord(words: seq[string]): (string, int) = (
       maxLength = word.len
       longestWord = word
   result = (longestWord, maxLength)
-)
 
 #-- Create the Usage section
-proc formatUsage(data: CmdosType): seq[string] = (
+proc makeMsgUsage(data: CmdosType): seq[string] =
   for group in data:
     for cmd in group.cmds:
       result.add("[" & cmd.names.join("/") & "]")
-)
 
 #-- Create the Commands section
-proc formatCommands(data: CmdosType): seq[string] = (
+proc makeMsgCommands(data: CmdosType): seq[string] =
   let cmds = data[0].cmds
-  let maxCmdLen = cmds.mapIt(it.names.join(", ").len).max
+  let text = (" " & "[options]")
+  var maxCmdLen: int = cmds.mapIt(it.names.join(", ").len).max
 
   for cmd in cmds:
-    let cmdName = cmd.names.join(", ")
-    let spacing = (" ").repeat(maxCmdLen - cmdName.len + 3)
+    if cmd.args.len > 0:
+      maxCmdLen = (maxCmdLen + text.len)
+      break
+
+  for cmd in cmds:
+    var cmdName: string = cmd.names.join(", ") & (if cmd.args.len > 0: text else: "")
+    let spacing: string = (" ").repeat(maxCmdLen - cmdName.len + 3)
     result.add(margin & cmdName & spacing & cmd.desc)
-)
 
 #-- Create the Options section
-proc formatOptions(data: CmdosType): seq[string] = (
+proc makeMsgOptions(data: CmdosType): seq[string] =
   let cmds = data[0].cmds
   for cmd in cmds:
     if cmd.args.len > 0:
       let (longestName, _) = getLongestWord(cmd.names)
-      let placeholderLen: int = cmd.args.mapIt(it.placeholder.len).max
-      let maxArgLen: int = cmd.args.mapIt(it.names.join(", ").len).max + placeholderLen
-      result.add("\n$#$# options:$#" % [underline, longestName, reset])
+      let labelLen: int = cmd.args.mapIt(it.label.len).max
+      let maxArgLen: int = cmd.args.mapIt(it.names.join(", ").len).max + labelLen
+      result.add("\n$1Options for: $2$3" % [underline, longestName, reset])
 
       for arg in cmd.args:
-        let argName = arg.names.join(", ") & " " & arg.placeholder
-        let spacing = (" ").repeat(maxArgLen - argName.len + 3)
+        let argName: string = if areSeqEqual(arg.names, cmd.names): arg.label else:
+          arg.names.join(", ") & " " & arg.label
+
+        let spacing: string = (" ").repeat(maxArgLen - argName.len + 3)
         result.add(margin & argName & " " & spacing & arg.desc)
-)
 
 #-- Process the help screen
-proc processHelp*(data: CmdosType): string = (
+proc processHelp*(data: CmdosType): string =
   const cmdos = data[0]
-  const app: string = cmdos.name
+  const name: string = cmdos.name
 
-  const usageSection = "$1Usage:$2\n$4$3 $5\n" % [underline, reset, app, margin, formatUsage(data).join(" ")]
-  const commandsSection = "$1Commands:$2\n$3" % [underline, reset, formatCommands(data).join("\n")]
-  const optionsSection = formatOptions(data).join("\n")
+  const usage = "$1Usage:$2\n$4$3 $5\n" % [underline, reset, name, margin, makeMsgUsage(data).join(" ")]
+  const commands = "$1Commands:$2\n$3" % [underline, reset, makeMsgCommands(data).join("\n")]
+  const options = makeMsgOptions(data).join("\n")
 
-  result = [usageSection, commandsSection, optionsSection].join("\n") & "\n"
-)
+  result = [usage, commands, options].join("\n") & "\n"
 
