@@ -1,7 +1,7 @@
 type
   CmdosArg* = object
     names*, inputs*: seq[string]
-    desc*, placeholder*: string
+    desc*, label*: string
 
   CmdosCmd* = object
     names*: seq[string]
@@ -14,4 +14,5 @@ type
 
 type
   CmdosType* = static[array[1, Cmdos]]
+
 

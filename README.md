@@ -43,19 +43,19 @@ const Add = CmdosCmd(
       names: @["-t", "--title"],
       inputs: @["The Great Book"],
       desc: "The title of the book.",
-      placeholder: "<string>",
+      label: "<string>",
     ),
     CmdosArg(
       names: @["-a", "--author"],
       inputs: @["John Doe", "Susan Dek"],
       desc: "The author of the book.",
-      placeholder: "<string>...",
+      label: "<string>...",
     ),
     CmdosArg(
       names: @["-p", "--pages"],
       inputs: @["800"],
       desc: "The number of pages in the book.",
-      placeholder: "<int>",
+      label: "<int>",
     ),
   ],
 )
@@ -92,5 +92,4 @@ Aquí esta el [ejemplo](./test/example.nim) completo que demuestra cómo usar `C
 
 ## Licencia
 Cmdos está bajo la licencia MIT. Consulta el archivo `LICENSE` para obtener más información.
-
 

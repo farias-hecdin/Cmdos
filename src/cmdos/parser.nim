@@ -1,17 +1,16 @@
 import std/[os, terminal, strutils], pkg/[tinyre]
 import types
 
-proc showError(location, message: string) = (
+proc showError(location, message: string) =
   let location = "Error at [$#]:\n  " % [location]
   styledEcho(fgRed, location, resetStyle, message)
   quit(QuitFailure)
-)
 
 #-- Process input arguments
 let defaultArgs: seq[string] = os.commandLineParams()
 
-proc processArgs*(cmd: CmdosCmd, ignoreFirst: bool = false, inputArgs: seq[string] = defaultArgs): seq[tuple[data: seq[string]]] = (
-  let startIndex = if ignoreFirst: 1 else: 0
+proc processArgs*(cmd: CmdosCmd, ignoreFirstArg: bool = false, inputArgs: seq[string] = defaultArgs): seq[tuple[data: seq[string]]] =
+  let startIndex = if ignoreFirstArg: 1 else: 0
   let reExclude = tinyre.re"^-"
 
   for arg in cmd.args:
@@ -42,5 +41,4 @@ proc processArgs*(cmd: CmdosCmd, ignoreFirst: bool = false, inputArgs: seq[strin
       argValues.add(argName)
       argValues.add(arg.inputs)
     result.add((data: argValues))
-)
 
