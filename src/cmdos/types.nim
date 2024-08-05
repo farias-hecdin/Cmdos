@@ -14,5 +14,4 @@ type
 
 type
   CmdosType* = static[array[1, Cmdos]]
-
-
+  CmdosData* = seq[tuple[data: seq[string]]]
