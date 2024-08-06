@@ -9,7 +9,7 @@ proc showError(location, message: string) =
 #-- Process input arguments
 let defaultArgs: seq[string] = os.commandLineParams()
 
-proc processArgs*(cmd: CmdosCmd, ignoreFirstArg: bool = false, inputArgs: seq[string] = defaultArgs): CmdosData =
+proc processArgs*(cmd: static CmdosCmd, ignoreFirstArg: bool = false, inputArgs: seq[string] = defaultArgs): CmdosData =
   let startIndex = if ignoreFirstArg: 1 else: 0
   let reExclude = tinyre.re"^-"
 

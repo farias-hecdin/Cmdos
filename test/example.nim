@@ -39,31 +39,29 @@ const Add = CmdosCmd(
   ],
 )
 
-const Cli = [
-  Cmdos(
-    name: "Example",
-    version: "1.0.X",
-    cmds: @[Add, Version, Help],
-  )
-]
+const Command = Cmdos(
+  name: "Example",
+  version: "1.0.X",
+  cmds: @[Add, Version, Help],
+)
 
 # Init app
-proc run() =
+proc main() =
   if paramCount() > 0:
     case paramStr(1):
       # Generate a help message
       of "-h", "--help":
-        const help = processHelp(Cli)
+        const help = processHelp(Command)
         echo help
       # Generate a version message
       of "-v", "--version":
-        echo Cli[0].version
+        echo Command.version
       # Process the input arguments for the “Add” command.
       of "add":
-        var values = processArgs(Add)
+        var values = processArgs(Add, true)
         echo values
       else:
         echo "Invalid option"
 
-run()
+main()
 
