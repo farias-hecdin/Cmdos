@@ -25,53 +25,43 @@ proc getLongestWord(words: seq[string]): (string, int) =
 
 #-- Create the Usage section
 proc makeMsgUsage(data: static Cmdos): seq[string] =
+  result.add("$1Usage:$2\n$3$4" % [underline, reset, margin, data.name])
+
   for cmd in data.cmds:
     result.add("[" & cmd.names.join("/") & "]")
 
 #-- Create the Commands section
 proc makeMsgCommands(data: static Cmdos): seq[string] =
   let cmds = data.cmds
-  let text = (" " & "[options]")
-  var maxCmdLen: int = cmds.mapIt(it.names.join(", ").len).max
+  let maxLen: int = cmds.mapIt(it.names.join(", ").len).max
+  result.add("$1Commands:$2" % [underline, reset])
 
   for cmd in cmds:
-    if cmd.args.len > 0:
-      maxCmdLen = (maxCmdLen + text.len)
-      break
-
-  for cmd in cmds:
-    var cmdName: string = cmd.names.join(", ") & (
-      if cmd.args.len > 0: text
-      else: ""
-    )
-
-    let spacing: string = (" ").repeat(maxCmdLen - cmdName.len + 3)
-    result.add(margin & cmdName & spacing & cmd.desc)
+    let name: string = cmd.names.join(", ") & (if cmd.args.len > 0: " [options]" else: "")
+    let space: string = (" ").repeat(maxLen + 3 - name.len)
+    result.add(margin & name & space & cmd.desc)
 
 #-- Create the Options section
 proc makeMsgOptions(data: static Cmdos): seq[string] =
-  let cmds = data.cmds
-  for cmd in cmds:
+  for cmd in data.cmds:
     if cmd.args.len > 0:
-      let (longestName, _) = getLongestWord(cmd.names)
-      let labelLen: int = cmd.args.mapIt(it.label.len).max
-      let maxArgLen: int = cmd.args.mapIt(it.names.join(", ").len).max + labelLen
-      result.add("\n$1Options for: $2$3" % [underline, longestName, reset])
+      let (longName, _) = getLongestWord(cmd.names)
+      let maxLen: int = cmd.args.mapIt(it.names.join(", ").len + it.label.len + 1).max
+      result.add("\n$1Options for: $2$3" % [underline, longName, reset])
 
       for arg in cmd.args:
-        let argName: string = (
+        let name: string = (
           if areSeqEqual(arg.names, cmd.names): arg.label
           else: arg.names.join(", ") & " " & arg.label
         )
-
-        let spacing: string = (" ").repeat(maxArgLen - argName.len + 3)
-        result.add(margin & argName & " " & spacing & arg.desc)
+        let space: string = (" ").repeat(maxLen + 3 - name.len)
+        let default: string = "(default: " & arg.inputs.join(", ") & ")"
+        result.add(margin & name & space & arg.desc & " " & default)
 
 #-- Process the help screen
 proc processHelp*(data: static Cmdos): string =
-  const usage = "$1Usage:$2\n$4$3 $5\n" % [underline, reset, data.name, margin, makeMsgUsage(data).join(" ")]
-  const commands = "$1Commands:$2\n$3" % [underline, reset, makeMsgCommands(data).join("\n")]
+  const usage = makeMsgUsage(data).join(" ") & "\n"
+  const commands = makeMsgCommands(data).join("\n")
   const options = makeMsgOptions(data).join("\n")
-
   result = [usage, commands, options].join("\n") & "\n"
 
