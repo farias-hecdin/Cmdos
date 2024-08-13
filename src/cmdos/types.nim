@@ -1,12 +1,12 @@
 type
-  CmdosArg* = object
+  CmdosOpt* = object
     names*, inputs*: seq[string]
     desc*, label*: string
 
   CmdosCmd* = object
     names*: seq[string]
     desc*: string
-    args*: seq[CmdosArg]
+    opts*: seq[CmdosOpt]
 
   Cmdos* = object
     name*, version*: string

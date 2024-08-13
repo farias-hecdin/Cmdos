@@ -1,67 +1,62 @@
-import std/[strutils, sequtils, sets]
-import types
+import std/[strutils, sequtils]
+import types, utils, color
 
-const margin: string = (" ").repeat(2)
+const firstMargin: string = blank(2)
+const leftMargin: string = blank(4)
+const whitespace: string = firstMargin & leftMargin
 
-#-- ANSI Color code (thanks to: https://gist.github.com/JBlond/2fea43a3049b38287e5e9cefc87b2124)
-const bold = "\e[1;97m"
-const underline = (bold & "\e[4;37m")
-const reset = "\e[0m"
-
-#-- Compare two sequences
-proc areSeqEqual(seq1, seq2: seq[string]): bool =
-  return toHashSet(seq1) == toHashSet(seq2)
-
-#-- Get the longest word in an array and its length
-proc getLongestWord(words: seq[string]): (string, int) =
-  var longestWord = ""
-  var maxLength = 0
-
-  for word in words:
-    if word.len > maxLength:
-      maxLength = word.len
-      longestWord = word
-  result = (longestWord, maxLength)
+#-- Wrap message
+proc wrapMessage(message: string, maxLength: int): seq[string] =
+  let leftMargin = maxLength + whitespace.len
+  if message.len > 99:
+    result.add(wrapText(message, 99, 2, leftMargin))
+  else:
+    result.add(firstMargin & message)
 
 #-- Create the Usage section
 proc makeMsgUsage(data: static Cmdos): seq[string] =
-  result.add("$1Usage:$2\n$3$4" % [underline, reset, margin, data.name])
+  var message: seq[string]
+  var spacing = (data.name).len - 3
+  result.add("$#Usage:$#" % [styleUnderline, styleReset])
 
   for cmd in data.cmds:
-    result.add("[" & cmd.names.join("/") & "]")
+    message.add("[$#]" % [cmd.names.join("/")])
+  result.add(wrapMessage(data.name & " " & message.join(" "), spacing))
 
 #-- Create the Commands section
 proc makeMsgCommands(data: static Cmdos): seq[string] =
   let cmds = data.cmds
-  let maxLen: int = cmds.mapIt(it.names.join(", ").len).max
-  result.add("$1Commands:$2" % [underline, reset])
+  let maxLength: int = cmds.mapIt(it.names.join(", ").len + 1).max
+  result.add("$#Commands:$#" % [styleUnderline, styleReset])
 
   for cmd in cmds:
-    let name: string = cmd.names.join(", ") & (if cmd.args.len > 0: " [options]" else: "")
-    let space: string = (" ").repeat(maxLen + 3 - name.len)
-    result.add(margin & name & space & cmd.desc)
+    let name: string = cmd.names.join(", ") & (if cmd.opts.len > 0: " [options]" else: "")
+    let spacing: string = blank(maxLength - name.len + leftMargin.len)
+    let message: string = name & spacing & cmd.desc
+    result.add(wrapMessage(message, maxLength))
 
 #-- Create the Options section
 proc makeMsgOptions(data: static Cmdos): seq[string] =
   for cmd in data.cmds:
-    if cmd.args.len > 0:
-      let (longName, _) = getLongestWord(cmd.names)
-      let maxLen: int = cmd.args.mapIt(it.names.join(", ").len + it.label.len + 1).max
-      result.add("\n$1Options for: $2$3" % [underline, longName, reset])
+    if cmd.opts.len > 0:
+      let longName = utils.getLongestWord(cmd.names)
+      let maxLength: int = cmd.opts.mapIt(it.names.join(", ").len + it.label.len + 1).max
+      result.add("\n$#Options for: '$#'$#" % [styleUnderline, longName, styleReset])
 
-      for arg in cmd.args:
+      for opt in cmd.opts:
         let name: string = (
-          if areSeqEqual(arg.names, cmd.names): arg.label
-          else: arg.names.join(", ") & " " & arg.label
+          if areSeqEqual(opt.names, cmd.names): opt.label
+          else: "$# $#" % [opt.names.join(", "), opt.label]
         )
-        let space: string = (" ").repeat(maxLen + 3 - name.len)
-        let default: string = "(default: " & arg.inputs.join(", ") & ")"
-        result.add(margin & name & space & arg.desc & " " & default)
+        let spacing: string = blank(maxLength - name.len + leftMargin.len)
+        let description: string = opt.desc & " (df: $#)" % [opt.inputs.join(", ")]
+        let message: string = name & spacing & description
+        result.add(wrapMessage(message, maxLength))
 
 #-- Process the help screen
 proc processHelp*(data: static Cmdos): string =
-  const usage = makeMsgUsage(data).join(" ") & "\n"
-  const commands = makeMsgCommands(data).join("\n")
-  const options = makeMsgOptions(data).join("\n")
+  const usage: string = makeMsgUsage(data).join("\n") & "\n"
+  const commands: string = makeMsgCommands(data).join("\n")
+  const options: string = makeMsgOptions(data).join("\n")
   result = [usage, commands, options].join("\n") & "\n"
 
