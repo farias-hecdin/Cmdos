@@ -115,6 +115,29 @@ nim c example.nim
 
 Aquí esta un [ejemplo](./test/example.nim) completo que demuestra cómo usar `Cmdos`.
 
+### Procs
+
+#### `processArgs`
+
+Procesar las entradas del usuario para un comando específico
+
+```nim
+proc processArgs*(cmd: static CmdosCmd, inputs: seq[string] = defaultArgs): CmdosData
+```
+
+* `cmd`: Comando específico que se va a procesar.
+* `inputs` (opcional): Secuencia de cadenas de texto que representan las entradas del usuario. Si no se proporcionan, se utilizarán las entradas por defecto.
+
+#### `processHelp`
+
+Generar un mensaje de ayuda basado en los datos proporcionados.
+
+```nim
+proc processHelp*(data: static Cmdos): string
+```
+
+* `data`: Datos que se utilizarán para generar el mensaje de ayuda.
+
 ## 🛡️ Licencia
 
 Cmdos está bajo la licencia MIT. Consulta el archivo `LICENSE` para obtener más información.
