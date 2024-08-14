@@ -117,7 +117,7 @@ Aquí esta un [ejemplo](./test/example.nim) completo que demuestra cómo usar `C
 
 ### Documentación
 
-Para mas detalles visita la [documentación](doc/doc.md).
+Para más detalles, visita la [documentación](doc/doc.md).
 
 ## 🛡️ Licencia
 

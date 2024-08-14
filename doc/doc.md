@@ -17,8 +17,8 @@ La función `processArgs` se utiliza para interpretar y procesar las entradas de
 proc processArgs*(cmd: static CmdosCmd, inputs: seq[string] = defaultArgs): CmdosData
 ```
 
-* `cmd`: El comando específico que se va a procesar. Este parámetro es obligatorio y debe ser de tipo CmdosCmd (ver [Types](#types)).
-* `inputs` (opcional): Una secuencia de cadenas de texto que representan las entradas del usuario. Si no se proporcionan, se utilizarán las entradas por defecto.
+* **cmd**: El comando específico que se va a procesar. Este parámetro es obligatorio y debe ser de tipo `CmdosCmd` (ver [Types](#types)).
+* **inputs** (opcional): Una secuencia de cadenas de texto que representan las entradas del usuario. Si no se proporcionan, se utilizarán las entradas por defecto.
 
 ### `processHelp`
 
@@ -28,7 +28,7 @@ La función `processHelp` genera un mensaje de ayuda basado en los datos proporc
 proc processHelp*(data: static Cmdos): string
 ```
 
-* `data`: Los datos que se utilizarán para generar el mensaje de ayuda (ver [Types](#types)).
+* **data**: Los datos que se utilizarán para generar el mensaje de ayuda (ver [Types](#types)).
 
 ## Types
 
@@ -57,6 +57,6 @@ El tipo `CmdosData` se utiliza para manejar los datos procesados por [`processAr
 
 ```nim
 type
-  CmdosData* = seq[tuple[data: seq[string]]] # Secuencia de tuplas que contienen los datos procesados.
+  CmdosData* = seq[tuple[data: seq[string]]]
 ```
 
