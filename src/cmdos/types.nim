@@ -1,7 +1,9 @@
 type
   CmdosOpt* = object
-    names*, inputs*: seq[string]
-    desc*, label*: string
+    names*: seq[string]
+    inputs*: seq[string]
+    desc*: string
+    label*: string
 
   CmdosCmd* = object
     names*: seq[string]
@@ -9,7 +11,8 @@ type
     opts*: seq[CmdosOpt]
 
   Cmdos* = object
-    name*, version*: string
+    name*: string
+    version*: string
     cmds*: seq[CmdosCmd]
 
 type
