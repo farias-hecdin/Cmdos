@@ -33,20 +33,23 @@ nimble install https://github.com/farias-hecdin/Cmdos.git
 
 ```nim
 import pkg/cmdos
-import std/[os]
+import std/os
 ```
 
 2. Define tus argumentos y sus valores predeterminados. Aquí tienes un ejemplo de cómo definir un comando con varios argumentos:
 
 ```nim
-const Help = CmdosCmd(names: @["-h", "--help"], desc: "Displays this help screen and exit.")
+const Help = CmdosCmd(
+  names: @["-h", "--help"],
+  desc: "Displays this help screen and exit."
+)
 
 const Add = CmdosCmd(
   names: @["add"],
   desc: "Adds a new book to the library.",
   opts: @[
     CmdosOpt(
-      names: @["add"],
+      names: @["-t", "--title"],
       inputs: @["The Great Book"],
       desc: "The title of the book.",
       label: "<Bookname>",
@@ -89,7 +92,7 @@ proc main() =
         const help = processHelp(Command)
         echo help
       # Process the input arguments for the “Add” command.
-      of "add":
+      of "-t", "--title":
         var values = processArgs(Add)
         echo values
       else:
@@ -110,7 +113,7 @@ nim c example.nim
 ```
 
 ```sh
-./example add "Lorem Ipsum" --author "Jane Doe" --page 125
+./example --title "Lorem Ipsum" --author "Jane Doe" --page 125
 ```
 
 Aquí esta un [ejemplo](./test/example.nim) completo que demuestra cómo usar `Cmdos`.
