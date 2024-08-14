@@ -1,12 +1,12 @@
 # Package
 
-version      = "2.1.0"
-author       = "Hecdin Farias"
-description  = "Module that provides a simple way to process command-line arguments."
-license      = "MIT"
-srcDir       = "src"
+version       = "2.1.0"
+author        = "Hecdin Farias"
+description   = "Module that provides a simple way to process command-line arguments."
+license       = "MIT"
+srcDir        = "src"
 
-skipDirs     = @["test"]
+skipDirs      = @["test"]
 
 # Dependencies
 
