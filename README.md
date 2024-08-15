@@ -5,7 +5,7 @@
 
 Cmdos es un pequeño módulo para [`Nim`](https://nim-lang.org/) que facilita el procesamiento de argumentos de línea de comandos y la generación automática de mensajes de ayuda.
 
-## 🗒️ Características
+## :notepad: Características
 
 ### Ventajas:
 
@@ -87,11 +87,9 @@ const Command = Cmdos(
 proc main() =
   if paramCount() > 0:
     case paramStr(1):
-      # Generate a help message
       of "-h", "--help":
         const help = processHelp(Command)
         echo help
-      # Process the input arguments for the “Add” command.
       of "-t", "--title":
         var values = processArgs(Add)
         echo values
@@ -113,7 +111,7 @@ nim c example.nim
 ```
 
 ```sh
-./example --title "Lorem Ipsum" --author "Jane Doe" --page 125
+./example --title "Lorem Ipsum" --author "Jane Doe" --pages 125
 ```
 
 Aquí esta un [ejemplo](./test/example.nim) completo que demuestra cómo usar `Cmdos`.
