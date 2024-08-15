@@ -5,7 +5,7 @@
 
 Cmdos es un pequeño módulo para [`Nim`](https://nim-lang.org/) que facilita el procesamiento de argumentos de línea de comandos y la generación automática de mensajes de ayuda.
 
-## :notepad: Características
+## 🗒️ Características
 
 ### Ventajas:
 
