@@ -1,4 +1,4 @@
-import cmdos/[parser, help, types]
+import cmdos/[option_handler, help_generator, types]
 
 # Export the modules
-export parser, help, types
+export option_handler, help_generator, types

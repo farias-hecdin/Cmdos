@@ -1,5 +1,4 @@
-> [!TIP]
-> Use `Google Translate` to read this file in your native language.
+> Translate this file into your native language using `Google Translate` or a [similar service](https://immersivetranslate.com).
 
 # Cmdos
 
