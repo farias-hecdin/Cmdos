@@ -14,4 +14,6 @@ type
     cmds*: seq[CmdosCmd]
 
 type
-  CmdosData* = seq[tuple[data: seq[string]]]
+  CmdosArgs* = seq[tuple[data: seq[string]]]
+  CmdosFlags* = seq[string]
+

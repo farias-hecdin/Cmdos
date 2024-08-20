@@ -22,6 +22,7 @@ const Create = CmdosCmd(
     # Short form: excluding field names
     (@["-a", "--author"], @["John Doe", "Susan Dek"], "Adds a new book to the library.", "<names>"),
     (@["-p", "--pages"], @["800"], longText, "<number>"),
+    (@["-r", "--reset"], @[], longText, ""),
   ],
 )
 
