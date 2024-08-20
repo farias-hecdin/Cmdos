@@ -15,7 +15,7 @@ Cmdos es un pequeño módulo para [`Nim`](https://nim-lang.org/) que facilita el
 
 ### Desventajas:
 
-~* No permite argumentos solitarios; todos los argumentos deben recibir un valor por defecto.~
+* ~No permite argumentos solitarios; todos los argumentos deben recibir un valor por defecto.~
 * No admite delimitadores para separar valores (por ejemplo: `-c=Red,Blue`, `-c=:Red:Blue`), solo espacios en blanco (`-a Red Blue`).
 * No admite llamar un mismo argumento múltiples veces; es decir, `-c Red -c Blue` ignorará la segunda llamada del argumento.
 
@@ -55,7 +55,7 @@ const Create = CmdosCmd(
     # Short form: excluding field names
     (@["-a", "--author"], @["John Doe", "Susan Dek"], "Adds a new book to the library.", "<names>"),
     (@["-p", "--pages"], @["800"], longText, "<number>"),
-    (@["-r", "--reset"], @[], longText, ""),
+    (@["-r", "--reset"], @[], longText, ""), # Behaves as a flag if no input is given.
   ],
 )
 ```
