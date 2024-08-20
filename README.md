@@ -11,10 +11,11 @@ Cmdos es un pequeño módulo para [`Nim`](https://nim-lang.org/) que facilita el
 * Es muy fácil de implementar.
 * Permite recibir múltiples entradas para un mismo argumento.
 * Provee un generador de mensajes de ayuda que se crea en tiempo de compilación.
+* Permite añadir flags.
 
 ### Desventajas:
 
-* No permite argumentos solitarios; todos los argumentos deben recibir un valor por defecto.
+~* No permite argumentos solitarios; todos los argumentos deben recibir un valor por defecto.~
 * No admite delimitadores para separar valores (por ejemplo: `-c=Red,Blue`, `-c=:Red:Blue`), solo espacios en blanco (`-a Red Blue`).
 * No admite llamar un mismo argumento múltiples veces; es decir, `-c Red -c Blue` ignorará la segunda llamada del argumento.
 
@@ -38,33 +39,23 @@ import std/os
 2. Define tus argumentos y sus valores predeterminados. Aquí tienes un ejemplo de cómo definir un comando con varios argumentos:
 
 ```nim
+# Creating a command that does not accept options
 const Help = CmdosCmd(
-  names: @["-h", "--help"],
-  desc: "Displays this help screen and exit."
+    names: @["-h", "--help"],
+    desc: "Displays this help screen and exit."
 )
 
-const Add = CmdosCmd(
-  names: @["add"],
+# Creating a command that accepts options
+const Create = CmdosCmd(
+  names: @["create"],
   desc: "Adds a new book to the library.",
   opts: @[
-    CmdosOpt(
-      names: @["-t", "--title"],
-      inputs: @["The Great Book"],
-      desc: "The title of the book.",
-      label: "<Bookname>",
-    ),
-    CmdosOpt(
-      names: @["-a", "--author"],
-      inputs: @["John Doe", "Susan Dek"],
-      desc: "Adds a new book to the library.",
-      label: "<names>",
-    ),
-    CmdosOpt(
-      names: @["-p", "--pages"],
-      inputs: @["800"],
-      desc: "The number of pages in the book.",
-      label: "<number>",
-    ),
+    # Long form: Including field names.
+    (names: @["-t", "--title"], inputs: @["The Big Book"], desc: "The title of the book.", label: "<name>"),
+    # Short form: excluding field names
+    (@["-a", "--author"], @["John Doe", "Susan Dek"], "Adds a new book to the library.", "<names>"),
+    (@["-p", "--pages"], @["800"], longText, "<number>"),
+    (@["-r", "--reset"], @[], longText, ""),
   ],
 )
 ```
@@ -72,7 +63,6 @@ const Add = CmdosCmd(
 ```nim
 const Command = Cmdos(
   name: "Example",
-  version: "1.0.0",
   cmds: @[
     Add,
     Help
@@ -83,22 +73,26 @@ const Command = Cmdos(
 3. Procesa los argumentos y extrae los valores analizados. Aquí tienes un ejemplo de cómo hacerlo:
 
 ```nim
+# Setup an example app
 proc main() =
   if paramCount() > 0:
-    case paramStr(1):
-      of "-h", "--help":
-        const help = processHelp(Command)
-        echo help
-      of "-t", "--title":
-        var values = processArgs(Add)
-        echo values
-      else:
-        echo "Invalid option."
+    case paramStr(1)
+    # Generate a 'help message'
+    of "-h", "--help":
+      const help = processHelp(Command)
+      echo help
+    # Process the input arguments for the 'Create' command.
+    of "create":
+      var (flags, args) = processCmd(Create)
+      echo flags, args
+    else:
+      echo "Invalid option."
 ```
 
 4. Una vez que los argumentos han sido procesados, puedes utilizarlos en tu aplicación.
 
 ```nim
+# Run the app
 when isMainModule:
   main()
 ```
@@ -110,7 +104,7 @@ nim c example.nim
 ```
 
 ```sh
-./example --title "Lorem Ipsum" --author "Jane Doe" --pages 125
+./example create --title "Lorem Ipsum" --author "Jane Doe" --pages 125
 ```
 
 Aquí esta un [ejemplo](./test/example.nim) completo que demuestra cómo usar `Cmdos`.

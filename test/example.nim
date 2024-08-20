@@ -42,8 +42,8 @@ proc main() =
       echo help
     # Process the input arguments for the 'Create' command.
     of "create":
-      var values = processArgs(Create, false) # 'false' ignore first argument. (default: false)
-      echo values
+      var (flags, args) = processCmd(Create, false) # 'false' ignore first argument. (default: false)
+      echo flags, args
     else:
       echo "Invalid option."
 

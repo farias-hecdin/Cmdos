@@ -12,7 +12,7 @@ proc validateCmdosCmd(cmd: CmdosCmd): bool =
 #-- Process input options
 let defaultArgs: seq[string] = os.commandLineParams()
 
-proc processArgs*(cmd: static CmdosCmd, ignoreFirst: bool = false, inputs: seq[string] = defaultArgs): (CmdosFlags, CmdosArgs) =
+proc processCmd*(cmd: static CmdosCmd, ignoreFirst: bool = false, inputs: seq[string] = defaultArgs): (CmdosFlags, CmdosArgs) =
   # Validate the command
   when not validateCmdosCmd(cmd):
     errorText("There is an error in '$#'" % [cmd.names])
