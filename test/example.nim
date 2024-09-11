@@ -1,4 +1,4 @@
-import std/os
+import std/[os, strutils]
 import "../src/cmdos"
 
 const longText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
@@ -17,9 +17,24 @@ const Buy = CmdosCmd(
   names: @["buy"],
   desc: "Buys cryptocurrencies.",
   opts: @[
-    CmdosOpt(names: @["-c", "--currency"], inputs: @["btc", "eth", "ltc"], desc: "The cryptocurrency to buy.", label: "<currency>"),
-    CmdosOpt(names: @["-a", "--amount"], inputs: @["1.0"], desc: "The amount of cryptocurrency to buy.", label: "<amount>"),
-    CmdosOpt(names: @["-p", "--price"], inputs: @["1000.0"], desc: longText, label: "<price>"),
+    CmdosOpt(
+      names: @["-c", "--currency"],
+      inputs: @["btc", "eth", "ltc"],
+      desc: "The cryptocurrency to buy.",
+      label: "<currency>"
+    ),
+    CmdosOpt(
+      names: @["-a", "--amount"],
+      inputs: @["1.0"],
+      desc: "The amount of cryptocurrency to buy.",
+      label: "<amount>"
+    ),
+    CmdosOpt(
+      names: @["-p", "--price"],
+      inputs: @["1000.0"],
+      desc: longText,
+      label: "<price>"
+    ),
     CmdosOpt(names: @["-r", "--reinvest"], desc: longText),
   ],
 )
@@ -27,16 +42,25 @@ const Buy = CmdosCmd(
 const Anything = CmdosCmd(
   names: @[""],
   opts: @[
-    CmdosOpt(names: @["-btc", "--bitcoin"], desc: "Check Bitcoin price"),
-    CmdosOpt(names: @["-ltc", "--litecoin"], desc: "Check Bitcoin price"),
-    CmdosOpt(names: @["-eth", "--ethereum"], desc: "Check Ethereum price"),
+    CmdosOpt(names: @["-A", "--all"], desc: "Check cryptocurrency market."),
+    CmdosOpt(names: @["-btc", "--bitcoin"], desc: "Check Bitcoin price."),
+    CmdosOpt(names: @["-ltc", "--litecoin"], desc: "Check Bitcoin price."),
+    CmdosOpt(names: @["-eth", "--ethereum"], desc: "Check Ethereum price."),
   ]
 )
 
 # This object is useful for creating a 'Help message'
 const Command = Cmdos(
   name: "CryptoApp",
-  cmds: @[About, Anything, Buy, Help, License, More, Version]
+  cmds: @[
+    About,
+    Anything,
+    Buy,
+    Help,
+    License,
+    More,
+    Version
+  ]
 )
 
 # Setup an example app
@@ -54,14 +78,20 @@ proc main() =
     else:
       var (flags, _) = processCmd(Anything)
       echo flags
-      if getFlagsValue(flags, "--ethereum"):
-        echo "US$ 1940.0"
-      elif getFlagsValue(flags, "--bitcoin"):
-        echo "US$ 65000.0"
-      elif getFlagsValue(flags, "--litecoin"):
-        echo "US$ 110.0"
-      else:
+
+      var list: seq[string]
+      var allFlag = getFlags(flags, "--all")
+      if getFlags(flags, "--ethereum") or allFlag:
+        list.add("US$ 1940.0")
+      if getFlags(flags, "--bitcoin") or allFlag:
+        list.add("US$ 65000.0")
+      if getFlags(flags, "--litecoin") or allFlag:
+        list.add("US$ 110.0")
+
+      if list.len == 0:
         echo "Invalid option."
+      else:
+        echo list.join(", ")
 
 # Run the app
 when isMainModule:

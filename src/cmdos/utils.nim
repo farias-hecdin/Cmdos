@@ -40,7 +40,7 @@ proc wrapText*(text: string, width, firstMargin, leftMargin: int): seq[string] =
     line.add(currentLine)
   return line
 
-#-- Validate data
+#-- Data validation
 proc validateCmdosCmd*(cmd: CmdosCmd): bool =
   var namesCount = 0
   for opt in cmd.opts:

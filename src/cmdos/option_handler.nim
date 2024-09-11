@@ -50,14 +50,14 @@ proc processCmd*(cmd: static CmdosCmd, ignoreFirst: bool = false, inputs: seq[st
   return (flags, data)
 
 # Get the value of an option
-proc getArgsValue*(data: CmdosArgs, optLongName: string): seq[string] =
+proc getArgs*(data: CmdosArgs, optLongName: string): seq[string] =
   for arg in data:
     if arg.data.len > 0 and arg.data[0] == optLongName:
       # Returns all values after the option name
       result = arg.data[1..^1]
 
 # Get the value of a flag
-proc getFlagsValue*(data: CmdosFlags, optLongName: string): bool =
+proc getFlags*(data: CmdosFlags, optLongName: string): bool =
   var value: bool
   for flag in data:
     if flag == optLongName:
