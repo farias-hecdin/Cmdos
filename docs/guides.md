@@ -4,8 +4,8 @@
   - [Procs](#procs)
     - [`processCmd`](#processcmd)
     - [`processHelp`](#processhelp)
-    - [`getArgsValue`](#getargsvalue)
-    - [`getFlagsValue`](#getflagsvalue)
+    - [`getArgs`](#getargs)
+    - [`getFlags`](#getflags)
   - [Types](#types)
     - [`CmdosArgs` y `CmdosFlags`](#cmdosargs-y-cmdosflags)
 
@@ -33,33 +33,34 @@ proc processHelp*(data: static Cmdos): string
 
 * **data**: Los datos que se utilizarán para generar el mensaje de ayuda (ver [Types](#types)).
 
-### `getArgsValue`
+### `getArgs`
 
 ```nim
 # Get the value of an option
-proc getArgsValue*(data: CmdosArgs, optName: string): seq[string]
+proc getArgsValue*(data: CmdosArgs, optLongName: string): seq[string]
 ```
 
-### `getFlagsValue`
+### `getFlags`
 
-```nim
+```nLongim
 # Get the value of a flag
-proc getFlagsValue*(data: CmdosFlags, optName: string): bool
+proc getFlagsValue*(data: CmdosFlags, optLongName: string): bool
 ```
 
 ## Types
 
 ```nim
 type
+  CmdosOpt* = object
+    names*: seq[string]
+    inputs*: seq[string]
+    desc*: string
+    label*: string
+
   CmdosCmd* = object
     names*: seq[string]
     desc*: string
-    opts*: seq[tuple[
-      names: seq[string],
-      inputs: seq[string],
-      desc: string,
-      label: string
-    ]]
+    opts*: seq[CmdosOpt]
 
   Cmdos* = object
     name*: string
