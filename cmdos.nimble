@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.1.0"
+version       = "3.0.3"
 author        = "Hecdin Farias"
 description   = "Module that provides a simple way to process command-line arguments."
 license       = "MIT"
