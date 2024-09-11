@@ -1,4 +1,5 @@
 import std/[sets, strutils]
+import types
 
 #-- Add whitespace
 proc blank*(num: int): string {.inline.} =
@@ -38,4 +39,21 @@ proc wrapText*(text: string, width, firstMargin, leftMargin: int): seq[string] =
   if (currentLine.len > 0):
     line.add(currentLine)
   return line
+
+#-- Validate data
+proc validateCmdosCmd*(cmd: CmdosCmd): bool =
+  var namesCount = 0
+  for opt in cmd.opts:
+    if opt.names == cmd.names:
+      namesCount += 1
+      if namesCount > 1: return false
+  return true
+
+proc validateCmdos*(cmd: static Cmdos): bool =
+  var namesCount = 0
+  for cmds in cmd.cmds:
+    if "" in cmds.names:
+      namesCount += 1
+      if namesCount > 1: return false
+  return true
 

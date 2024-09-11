@@ -2,7 +2,7 @@
 
 # Cmdos
 
-Cmdos es un pequeño módulo para [`Nim`](https://nim-lang.org/) que facilita el procesamiento de argumentos de línea de comandos y la generación automática de mensajes de ayuda.
+Cmdos es un pequeño módulo para **Nim** que facilita el procesamiento de argumentos de línea de comandos y la generación automática de mensajes de ayuda.
 
 ## 🗒️ Características
 
@@ -50,12 +50,10 @@ const Create = CmdosCmd(
   names: @["create"],
   desc: "Adds a new book to the library.",
   opts: @[
-    # Long form: Including field names.
-    (names: @["-t", "--title"], inputs: @["The Big Book"], desc: "The title of the book.", label: "<name>"),
-    # Short form: excluding field names
-    (@["-a", "--author"], @["John Doe", "Susan Dek"], "Adds a new book to the library.", "<names>"),
-    (@["-p", "--pages"], @["800"], longText, "<number>"),
-    (@["-r", "--reset"], @[], longText, ""), # Behaves as a flag if no input is given.
+    CmdosOpt(names: @["-t", "--title"], inputs: @["The Big Book"], desc: "The title of the book.", label: "<name>"),
+    CmdosOpt(names: @["-a", "--author"], inputs: @["John Doe", "Susan Dek"], desc:"Adds a new book to the library.", label: "<names>"),
+    CmdosOpt(names: @["-p", "--pages"], inputs: @["800"], desc: longText, label: "<number>"),
+    CmdosOpt(names: @["-r", "--reset"], @[], longText), # Behaves as a flag if no input is given.
   ],
 )
 ```

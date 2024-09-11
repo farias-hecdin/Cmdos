@@ -9,6 +9,5 @@ const
   red* = "\e[38;5;196m"
 
 #-- Show a error message
-proc errorText*(message: string) =
-  echo "$2$4Error:$3 $1" % [message, bold, unstyle, red]
-  quit(QuitFailure)
+proc errorText*(message: string): string =
+  result = "$2$4Error:$3 $1" % [message, bold, unstyle, red]

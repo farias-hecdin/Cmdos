@@ -1,4 +1,4 @@
-import std/[strutils, sequtils]
+import std/[strutils, sequtils, algorithm]
 import types, utils, text_styled
 
 const firstMargin = blank(2)
@@ -19,23 +19,34 @@ proc makeMsgUsage(data: static Cmdos): seq[string] =
   # Adds the header for the usage message
   result.add("$#Usage:$#" % [emphasis, unstyle])
   # Constructs the usage message
-  let msg = name & data.cmds.mapIt("[$#]" % [it.names.join("/")]).join(" ")
+  var cmdNames: seq[string]
+  for cmd in data.cmds:
+    if "" in cmd.names:
+      cmdNames.add("<options>")
+    else:
+      cmdNames.add("[$#]" % [cmd.names.join("/")])
+  cmdNames.sort()
+  let msg = name & cmdNames.join(" ")
   result.add(wrapMessage(msg, space))
 
 #-- Create the Commands section
 proc makeMsgCommands(data: static Cmdos): seq[string] =
   let cmds = data.cmds
-  let suffix = " [options]"
+  let suffix = " <options>"
   let maxLen = cmds.mapIt(it.names.join(", ").len + (if it.opts.len > 0: suffix.len else: 0)).max
   # Adds the header for the list of commands
   result.add("$#Commands:$#" % [emphasis, unstyle])
 
   # Iterates over each command and generates its message
+  var cmdMsgs: seq[string]
   for cmd in cmds:
     let name = cmd.names.join(", ") & (if cmd.opts.len > 0: suffix else: "")
     let space = blank(maxLen + leftMargin.len - name.len)
     let msg = name & space & cmd.desc
-    result.add(wrapMessage(msg, maxLen + 4))
+    if "" in cmd.names:
+      continue
+    cmdMsgs.add(wrapMessage(msg, maxLen + 4))
+  result.add(cmdMsgs)
 
 #-- Create the Options section
 proc makeMsgOptions(data: static Cmdos): seq[string] =
@@ -60,6 +71,12 @@ proc makeMsgOptions(data: static Cmdos): seq[string] =
 
 #-- Process the help screen
 proc processHelp*(data: static Cmdos): string =
+  # Validate the command
+  if not validateCmdos(data):
+    let msg = errorText("There is two cmds.names with @['']")
+    echo msg
+    return msg
+
   const usage = makeMsgUsage(data).join("\n") & "\n"
   const commands = makeMsgCommands(data).join("\n")
   const options = makeMsgOptions(data).join("\n")

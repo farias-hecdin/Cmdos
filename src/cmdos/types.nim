@@ -1,13 +1,14 @@
 type
+  CmdosOpt* = object
+    names*: seq[string]
+    inputs*: seq[string]
+    desc*: string
+    label*: string
+
   CmdosCmd* = object
     names*: seq[string]
     desc*: string
-    opts*: seq[tuple[
-      names: seq[string],
-      inputs: seq[string],
-      desc: string,
-      label: string
-    ]]
+    opts*: seq[CmdosOpt]
 
   Cmdos* = object
     name*: string
