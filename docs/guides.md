@@ -37,14 +37,14 @@ proc processHelp*(data: static Cmdos): string
 
 ```nim
 # Get the value of an option
-proc getArgsValue*(data: CmdosArgs, optLongName: string): seq[string]
+proc getArgs*(data: CmdosArgs, optLongName: string): seq[string]
 ```
 
 ### `getFlags`
 
-```nLongim
+```nim
 # Get the value of a flag
-proc getFlagsValue*(data: CmdosFlags, optLongName: string): bool
+proc getFlags*(data: CmdosFlags, optLongName: string): bool
 ```
 
 ## Types
