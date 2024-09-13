@@ -64,7 +64,11 @@ proc makeMsgOptions(data: static Cmdos): seq[string] =
           else: "$# $#" % [opt.names.join(", "), opt.label]
         )
         let space = blank(maxLen + leftMargin.len - name.len)
-        let showDfValue = (if opt.inputs.len > 0: " (df: '$#')" % [opt.inputs.join(", ")] else: "")
+        let showDfValue = (
+          if opt.inputs.len > 0 and not opt.noDefault:
+            " (df: '$#')" % [opt.inputs.join(", ")]
+          else: ""
+        )
         let desc = opt.desc & showDfValue
         let msg = name & space & desc
         result.add(wrapMessage(msg, maxLen + 4))

@@ -4,6 +4,7 @@ type
     inputs*: seq[string]
     desc*: string
     label*: string
+    noDefault*: bool = false
 
   CmdosCmd* = object
     names*: seq[string]
