@@ -41,13 +41,24 @@ proc wrapText*(text: string, width, firstMargin, leftMargin: int): seq[string] =
   return line
 
 #-- Data validation
+proc hasDuplicates(s: seq[string]): bool =
+  for i in 0..<s.high:
+    for j in i + 1..<s.len:
+      if s[i] == s[j]:
+        return true
+  return false
+
 proc validateCmdosCmd*(cmd: CmdosCmd): bool =
   var namesCount = 0
+  var list: seq[string]
+
   for opt in cmd.opts:
     if opt.names == cmd.names:
       namesCount += 1
       if namesCount > 1: return false
-  return true
+  for opt in cmd.opts:
+    list.add(opt.names)
+  return not hasDuplicates(list)
 
 proc validateCmdos*(cmd: static Cmdos): bool =
   var namesCount = 0
